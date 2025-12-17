@@ -307,7 +307,13 @@
     FOR: { noun:"森", vibe:"繁茂", verb:"縛る" },
     SKY: { noun:"空", vibe:"疾風", verb:"裂く" },
   };
-
+  const CONTINENTS = {
+  LUN: { name: "月",  color: "#5A6EFF" },
+  SOL: { name: "太陽", color: "#FFAA00" },
+  SEA: { name: "海",  color: "#00A0FF" },
+  FOR: { name: "森",  color: "#00BE78" },
+  SKY: { name: "空",  color: "#78C8FF" },
+};
   const SKILL_NOUNS = ["スラスト","ステップ","スラッシュ","リフト","ガード","ブースト","バースト","シフト"];
   const ULT_WORDS   = ["オーバードライブ","エクリプス","グランドクロス","アストラルレイ","ゼロポイント","テンペスト"];
   const DESC_TEMPLATES = [
@@ -318,26 +324,32 @@
   ];
 
   function makeCardText(name, parts){
-    const seed = fnv1a32(`${name}|${parts.code}`);
-    const rng = mulberry32(seed);
-    const w = ATTR_WORD[parts.attr] || { noun: parts.attr, vibe:"異相", verb:"穿つ" };
+  const seed = fnv1a32(`${name}|${parts.code}`);
+  const rng = mulberry32(seed);
 
-    const skill = `${w.noun}${SKILL_NOUNS[Math.floor(rng()*SKILL_NOUNS.length)]}`;
-    const ult   = `${w.noun}・${ULT_WORDS[Math.floor(rng()*ULT_WORDS.length)]}`;
+  const w = ATTR_WORD[parts.attr] || { noun: parts.attr, vibe:"異相", verb:"穿つ" };
+  const c = CONTINENTS[parts.attr] || { name: w.noun, color: "#111" };
 
-    // フレーバー：テンプレから2文抽選
-    const pick = (arr)=> arr[Math.floor(rng()*arr.length)];
-    const a = pick(DESC_TEMPLATES);
-    const b = pick(DESC_TEMPLATES);
-    const desc = [a,b].map(t =>
-      t.replaceAll("{noun}", w.noun)
-       .replaceAll("{vibe}", w.vibe)
-       .replaceAll("{verb}", w.verb)
-       .replaceAll("{souln}", parts.soul)
-    ).join("\n");
+  // 技名：大陸名を採用
+  const skill = `${c.name}${SKILL_NOUNS[Math.floor(rng()*SKILL_NOUNS.length)]}`;
+  const ult   = `${c.name}・${ULT_WORDS[Math.floor(rng()*ULT_WORDS.length)]}`;
 
-    return { skill, ult, desc };
-  }
+  // 説明文：2行が被らないようにする
+  const pick = (arr)=> arr[Math.floor(rng()*arr.length)];
+  const first = pick(DESC_TEMPLATES);
+  const rest = DESC_TEMPLATES.filter(t => t !== first);
+  const second = pick(rest);
+
+  const desc = [first, second].map(t =>
+    t.replaceAll("{noun}", c.name)     // ここも大陸名に寄せる（好みで w.noun に戻してOK）
+     .replaceAll("{vibe}", w.vibe)
+     .replaceAll("{verb}", w.verb)
+     .replaceAll("{souln}", parts.soul)
+  ).join("\n");
+
+  return { skill, ult, desc, color: c.color };
+}
+
 
   // ===== DOM =====
   const elName = document.getElementById("displayName");
@@ -379,6 +391,9 @@
     if (!parts) return setMsg("運命コードの形式が違うよ（例：SKY-983-7405758452）。");
 
     const text = makeCardText(name, parts);
+    vSkill.style.color = text.color;
+    vUlt.style.color   = text.color;
+
 
     applyTheme(parts.attr);
     vAttr.textContent = parts.attr;
