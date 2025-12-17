@@ -93,11 +93,6 @@ input[type="date"] {
 
 <div class="card">
   <div>
-    <label for="name">名前</label>
-    <input id="name" type="text" placeholder="例：うちゃみん" />
-  </div>
-
-  <div>
     <label for="dob">生年月日</label>
     <input id="dob" type="date" />
   </div>
@@ -153,8 +148,8 @@ input[type="date"] {
     return String(num).padStart(len, "0");
   }
 
-  function makeDestinyCode(name, dob, gender) {
-    const seedStr = `${name.trim()}|${dob}|${gender}`;
+  function makeDestinyCode(dob, gender) {
+  const seedStr = `${dob}|${gender}`;
     const seed = fnv1a32(seedStr);
     const rng = mulberry32(seed);
 
@@ -169,7 +164,6 @@ input[type="date"] {
     return `${attrObj.code}-${soul}-${rand10}`;
   }
 
-  const nameEl = document.getElementById("name");
   const dobEl = document.getElementById("dob");
   const genBtn = document.getElementById("gen");
   const outEl = document.getElementById("output");
@@ -181,7 +175,7 @@ input[type="date"] {
   }
 
   function validate() {
-    return nameEl.value.trim() && dobEl.value;
+    return dobEl.value;
   }
 
   function updateBtn() {
@@ -189,7 +183,7 @@ input[type="date"] {
   }
 
 genBtn.addEventListener("click", async () => {
-  const code = makeDestinyCode(nameEl.value, dobEl.value, getGender());
+  const code = makeDestinyCode(dobEl.value, getGender());
   codeText.textContent = code;
   outEl.style.display = "block";
 
@@ -205,7 +199,6 @@ genBtn.addEventListener("click", async () => {
     setTimeout(() => copyBtn.textContent = "コピー", 1500);
   });
 
-  nameEl.addEventListener("input", updateBtn);
   dobEl.addEventListener("change", updateBtn);
 
   // 性別変更でもUIを更新（気持ちよさ担当）
@@ -216,6 +209,7 @@ genBtn.addEventListener("click", async () => {
 
 </body>
 </html>
+
 
 
 
