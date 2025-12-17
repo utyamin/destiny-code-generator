@@ -27,9 +27,12 @@
       margin: 12px 0 6px;
       font-weight: 600;
     }
-    input[type="text"],
-    input[type="date"] {
-      width: 95%;
+*, *::before, *::after { box-sizing: border-box; }
+
+input[type="text"],
+input[type="date"] {
+      width: 100%;
+      max-width: 95%;
       padding: 10px;
       border-radius: 10px;
       border: 1px solid #ccc;
@@ -202,6 +205,7 @@
 
 </body>
 </html>
+
 
 
 
