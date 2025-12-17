@@ -1,4 +1,4 @@
-<!doctype html>
+  <!doctype html>
 <html lang="ja">
 <head>
   <meta charset="utf-8" />
@@ -8,13 +8,17 @@
   <style>
     *, *::before, *::after { box-sizing: border-box; }
     body{
-      font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
-      padding: 24px;
-      max-width: 980px;
-      margin: 0 auto;
-      background:#fafafa;
-    }
+  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+  padding: 24px;
+  max-width: 980px;
+  margin: 0 auto;
+  background:#fafafa;
+}
+
+/* カードだけ世界観フォント */
+.cardArtboard{ font-family: "Klee One", serif; }
     h1{ font-size: 20px; margin: 0 0 10px; }
+  
     .wrap{ display: grid; gap: 16px; }
     @media (min-width: 860px){
       .wrap{ grid-template-columns: 380px 1fr; align-items: start; }
@@ -207,15 +211,20 @@
       color:#666;
       line-height: 1.6;
     }
+    .illust{
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      height: 100%;
+      object-fit: contain;
+      pointer-events: none;
+    }
+
   /* =========================
    Font System
    ========================= */
-
-/* 全体のベース（最低限の可読性） */
-    body{
-      font-family: "Klee One", serif;
-    }
-
+    
 /* ===== キャラ名（最重要） ===== */
     .name{
       font-family: "Zen Antique Soft", serif;
@@ -255,7 +264,9 @@
     .codeSig{
       font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
     }
-
+    .illust{ z-index: 2; }
+    .artMark{ z-index: 1; }
+    .artSub{ z-index: 3; }
   </style>
 </head>
 <body>
@@ -265,10 +276,14 @@
 <div class="wrap">
   <div class="panel">
     <label for="displayName">表示名（カードに載せる名前）</label>
-    <input id="displayName" type="text" placeholder="例：うちゃみん / Listener001 / 風の旅人 など" />
+      <input id="displayName" type="text" placeholder="例：うちゃみん / Listener001 / 風の旅人 など" />
 
     <label for="destinyCode">運命コード</label>
-    <input id="destinyCode" type="text" placeholder="例：SKY-983-7405758452" />
+      <input id="destinyCode" type="text" placeholder="例：SKY-983-7405758452" />
+
+    <label>立ち絵画像URL</label>
+      <input id="illustUrl" type="text" placeholder="https://..." />
+
 
     <div class="hint">
       入力：表示名＋運命コード → カードプレビュー生成 → PNG保存。<br>
@@ -300,8 +315,7 @@
       </div>
 
       <div class="art">
-        <div class="artMark" id="vMark">SKY</div>
-        <div class="artSub">ART（将来ここに立ち絵）</div>
+          <img id="vIllust" class="illust" crossorigin="anonymous" />
       </div>
 
       <div class="textBox">
@@ -411,11 +425,13 @@
   const card = document.getElementById("card");
   const vAttr = document.getElementById("vAttr");
   const vName = document.getElementById("vName");
-  const vMark = document.getElementById("vMark");
   const vSkill = document.getElementById("vSkill");
   const vUlt = document.getElementById("vUlt");
   const vDesc = document.getElementById("vDesc");
   const vCode = document.getElementById("vCode");
+  const elIllust = document.getElementById("illustUrl");
+  const vIllust = document.getElementById("vIllust");
+
 
   function setMsg(text=""){ elMsg.textContent = text; }
 
@@ -438,6 +454,10 @@
     const parts = parseCode(elCode.value);
     if (!name) return setMsg("表示名を入力してね。");
     if (!parts) return setMsg("運命コードの形式が違うよ（例：SKY-983-7405758452）。");
+    vIllust.crossOrigin = "anonymous";
+    vIllust.referrerPolicy = "no-referrer";
+vIllust.src = elIllust.value.trim() || "";
+
 
     const text = makeCardText(name, parts);
     vSkill.style.color = text.color;
@@ -447,7 +467,6 @@
     applyTheme(parts.attr);
     vAttr.textContent = parts.attr;
     vName.textContent = name;
-    vMark.textContent = parts.attr;
     vSkill.textContent = text.skill;
     vUlt.textContent = text.ult;
     vDesc.textContent = text.desc;
@@ -494,13 +513,3 @@
 
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
