@@ -22,9 +22,6 @@
       padding: 18px;
       background: #fff;
     }
-    .card > div {
-  margin-bottom: 12px;
-}
     label {
       display: block;
       margin: 12px 0 6px;
@@ -86,14 +83,14 @@
 
 <div class="card">
   <div>
-  <label for="name">名前</label>
-  <input id="name" type="text" placeholder="例：うちゃさん" />
-</div>
+    <label for="name">名前</label>
+    <input id="name" type="text" placeholder="例：うちゃさん" />
+  </div>
 
-<div>
-  <label for="dob">生年月日</label>
-  <input id="dob" type="date" />
-</div>
+  <div>
+    <label for="dob">生年月日</label>
+    <input id="dob" type="date" />
+  </div>
 
   <label>性別</label>
   <div class="radios">
@@ -176,11 +173,7 @@
   }
 
   genBtn.addEventListener("click", () => {
-    const code = makeDestinyCode(
-      nameEl.value,
-      dobEl.value,
-      getGender()
-    );
+    const code = makeDestinyCode(nameEl.value, dobEl.value, getGender());
     codeText.textContent = code;
     outEl.style.display = "block";
   });
@@ -193,10 +186,12 @@
 
   nameEl.addEventListener("input", updateBtn);
   dobEl.addEventListener("change", updateBtn);
+
+  // 性別変更でもUIを更新（気持ちよさ担当）
+  document.querySelectorAll('input[name="gender"]').forEach(r => {
+    r.addEventListener("change", updateBtn);
+  });
 </script>
 
 </body>
 </html>
-
-
-
