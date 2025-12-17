@@ -308,11 +308,11 @@
     SKY: { noun:"空", vibe:"疾風", verb:"裂く" },
   };
   const CONTINENTS = {
-  LUN: { name: "月",  color: "#5A6EFF" },
-  SOL: { name: "太陽", color: "#FFAA00" },
-  SEA: { name: "海",  color: "#00A0FF" },
-  FOR: { name: "森",  color: "#00BE78" },
-  SKY: { name: "空",  color: "#78C8FF" },
+  LUN: { name: "ルミナス",  color: "#5A6EFF" },
+  SOL: { name: "ソルディア", color: "#FFAA00" },
+  SEA: { name: "マレリス",  color: "#00A0FF" },
+  FOR: { name: "ヴェルディア",  color: "#00BE78" },
+  SKY: { name: "クラウディア",  color: "#78C8FF" },
 };
   const SKILL_NOUNS = ["スラスト","ステップ","スラッシュ","リフト","ガード","ブースト","バースト","シフト"];
   const ULT_WORDS   = ["オーバードライブ","エクリプス","グランドクロス","アストラルレイ","ゼロポイント","テンペスト"];
@@ -338,8 +338,7 @@
   const pick = (arr)=> arr[Math.floor(rng()*arr.length)];
   const first = pick(DESC_TEMPLATES);
   const rest = DESC_TEMPLATES.filter(t => t !== first);
-  const second = pick(rest);
-
+  const second = pick(rest);  
   const desc = [first, second].map(t =>
     t.replaceAll("{noun}", c.name)     // ここも大陸名に寄せる（好みで w.noun に戻してOK）
      .replaceAll("{vibe}", w.vibe)
@@ -445,6 +444,7 @@
 
 </body>
 </html>
+
 
 
 
