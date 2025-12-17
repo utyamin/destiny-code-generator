@@ -60,43 +60,36 @@
     }
 
     /* ここがPNG化するターゲット */
-    .cardArtboard{
-      width: 420px;
-      border-radius: 22px;
-      border: 1px solid #dcdcdc;
-      background: #fff;
-      padding: 14px;
-      box-shadow: 0 10px 30px rgba(0,0,0,.06);
-    }
-
     .cardHeader{
-     display:flex;
-     justify-content:flex-start;
-     align-items: baseline;
-     gap: 10px;
+      display:flex;
+      justify-content:flex-start;
+      align-items: baseline;
+      gap: 10px;
       padding: 10px 12px;
-     border-radius: 16px;
-     color:#111;
-     background: #f4f4f4;
-  }
-
+      border-radius: 16px;
+      color:#111;
+      background: #f4f4f4;
+    }
+  
     .attrCode{
       font-weight: 900;
-     letter-spacing: 1px;
-     font-size: 14px;
-     padding: 4px 8px;
-     border-radius: 10px;
+      letter-spacing: 1px;
+      font-size: 12px;
+      padding: 3px 7px;
+      border-radius: 10px;
       background: rgba(0,0,0,.06);
+      opacity: .9;
   }
 
     .name{
-     font-weight: 900;
-     font-size: 18px;
-     line-height: 1.1;
-     overflow:hidden;
-     text-overflow: ellipsis;
-     white-space: nowrap;
-     max-width: 300px;
+      font-weight: 900;
+      font-size: 19px;
+      line-height: 1.1;
+      text-align: left;
+      overflow:hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      max-width: 300px;
   }
 
 
@@ -126,7 +119,15 @@
       font-size: 12px;
       opacity: .55;
     }
-
+    .art::after{
+      content:"";
+      position:absolute;
+      inset:-40%;
+      transform: rotate(20deg);
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,.55), transparent);
+      opacity:.25;
+      pointer-events:none;
+    }
     .textBox{
       margin-top: 12px;
       padding: 12px;
@@ -160,16 +161,28 @@
       white-space: pre-wrap;
     }
     .cardArtboard{
-     position: relative; /* ← これが重要。右下配置の基準になる */
-  }
-
+      width: 420px;
+      border-radius: 22px;
+      border: 1px solid #dcdcdc;
+      background: #fff;
+      padding: 14px;
+      box-shadow: 0 10px 30px rgba(0,0,0,.06);
+      position: relative; /* 署名の基準 */
+    }
     .codeSig{
+      position: absolute;
       right: 12px;
       bottom: 10px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
       font-size: 9px;
+      font-weight: 700;
       opacity: .28;
       letter-spacing: .1px;
+      user-select: none;
+      pointer-events: none;
   }
+
+
 
 
 
@@ -416,5 +429,6 @@
 
 </body>
 </html>
+
 
 
