@@ -4,6 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>カードメーカー（管理者用）</title>
+  <link href="https://fonts.googleapis.com/css2?family=Zen+Antique+Soft&family=Klee+One&family=Noto+Serif+JP:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { box-sizing: border-box; }
     body{
@@ -206,6 +207,53 @@
       color:#666;
       line-height: 1.6;
     }
+  /* =========================
+   Font System
+   ========================= */
+
+/* 全体のベース（最低限の可読性） */
+    body{
+      font-family: "Klee One", serif;
+    }
+
+/* ===== キャラ名（最重要） ===== */
+    .name{
+      font-family: "Zen Antique Soft", serif;
+      font-weight: 400;
+      letter-spacing: .6px;
+    }
+
+/* ===== ラベル（技 / 必殺） ===== */
+    .label{
+      font-family: "Klee One", serif;
+      font-weight: 600;
+      letter-spacing: .3px;
+    }
+
+/* ===== フレーバー文 ===== */
+    .desc{
+      font-family: "Klee One", serif;
+      font-weight: 400;
+    }
+
+/* ===== 技名・必殺技名 ===== */
+    .value{
+      font-family: "Noto Serif JP", serif;
+      font-weight: 600;
+      letter-spacing: .2px;
+    }
+
+/* ===== 属性コード（UI要素） ===== */
+    .attrCode{
+      font-family: "Noto Serif JP", serif;
+      font-weight: 700;
+    }
+
+/* ===== 運命コード（完全に無機質） ===== */
+    .codeSig{
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    }
+
   </style>
 </head>
 <body>
@@ -444,6 +492,7 @@
 
 </body>
 </html>
+
 
 
 
