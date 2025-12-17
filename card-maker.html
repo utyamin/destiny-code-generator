@@ -1,11 +1,427 @@
 <!doctype html>
 <html lang="ja">
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>カードメーカー（管理者用）</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    body{
+      font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+      padding: 24px;
+      max-width: 980px;
+      margin: 0 auto;
+      background:#fafafa;
+    }
+    h1{ font-size: 20px; margin: 0 0 10px; }
+    .wrap{ display: grid; gap: 16px; }
+    @media (min-width: 860px){
+      .wrap{ grid-template-columns: 380px 1fr; align-items: start; }
+    }
+
+    .panel{
+      border: 1px solid #ddd;
+      border-radius: 14px;
+      background: #fff;
+      padding: 16px;
+    }
+
+    label{ display:block; margin: 12px 0 6px; font-weight: 700; }
+    input[type="text"]{
+      width: 100%;
+      padding: 10px;
+      border-radius: 10px;
+      border: 1px solid #ccc;
+      font-size: 14px;
+    }
+    .hint{ font-size: 12px; color:#666; margin-top: 6px; line-height: 1.5; }
+    .row{ display:flex; gap: 10px; flex-wrap: wrap; margin-top: 12px; }
+    button{
+      padding: 10px 14px;
+      border-radius: 10px;
+      border: none;
+      background:#111;
+      color:#fff;
+      font-size: 14px;
+      cursor:pointer;
+    }
+    button.secondary{
+      background:#e5e5e5;
+      color:#111;
+    }
+    button:disabled{ opacity:.5; cursor:not-allowed; }
+
+    .msg{ margin-top: 10px; font-size: 13px; color:#b00020; min-height: 18px; }
+
+    /* ===== Card ===== */
+    .stage{
+      display:flex;
+      justify-content:center;
+    }
+
+    /* ここがPNG化するターゲット */
+    .cardArtboard{
+      width: 420px;
+      border-radius: 22px;
+      border: 1px solid #dcdcdc;
+      background: #fff;
+      padding: 14px;
+      box-shadow: 0 10px 30px rgba(0,0,0,.06);
+    }
+
+    .cardHeader{
+      display:flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 10px;
+      padding: 10px 12px;
+      border-radius: 16px;
+      color:#111;
+      background: #f4f4f4;
+    }
+    .attrCode{
+      font-weight: 900;
+      letter-spacing: 1px;
+      font-size: 14px;
+      padding: 4px 8px;
+      border-radius: 10px;
+      background: rgba(0,0,0,.06);
+    }
+    .name{
+      font-weight: 900;
+      font-size: 18px;
+      line-height: 1.1;
+      text-align: right;
+      overflow:hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      max-width: 260px;
+    }
+
+    .art{
+      margin-top: 12px;
+      height: 220px;
+      border-radius: 18px;
+      position: relative;
+      overflow: hidden;
+      border: 1px solid rgba(0,0,0,.06);
+      background: linear-gradient(135deg, rgba(0,0,0,.04), rgba(0,0,0,.01));
+      display:flex;
+      align-items:center;
+      justify-content:center;
+    }
+    .artMark{
+      font-weight: 900;
+      font-size: 52px;
+      opacity: .12;
+      letter-spacing: 2px;
+      user-select:none;
+    }
+    .artSub{
+      position:absolute;
+      bottom: 10px;
+      right: 12px;
+      font-size: 12px;
+      opacity: .55;
+    }
+
+    .textBox{
+      margin-top: 12px;
+      padding: 12px;
+      border-radius: 18px;
+      background: #f7f7f7;
+      border: 1px solid rgba(0,0,0,.05);
+    }
+    .line{
+      display:flex;
+      gap: 10px;
+      align-items: baseline;
+      margin: 6px 0;
+    }
+    .label{
+      width: 56px;
+      font-weight: 900;
+      letter-spacing: .5px;
+    }
+    .value{
+      font-weight: 700;
+      overflow:hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      max-width: 300px;
+    }
+    .desc{
+      margin-top: 10px;
+      font-size: 13px;
+      color:#222;
+      line-height: 1.55;
+      white-space: pre-wrap;
+    }
+    .footer{
+      margin-top: 12px;
+      padding: 10px 12px;
+      border-radius: 16px;
+      background:#f4f4f4;
+      display:flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      font-size: 12px;
+      color:#333;
+    }
+    .code{
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-weight: 800;
+      letter-spacing: .2px;
+      overflow:hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      max-width: 320px;
+    }
+
+    /* 属性カラー（背景のニュアンス） */
+    .theme-LUN .cardHeader, .theme-LUN .footer { background: rgba(90,110,255,.10); }
+    .theme-SOL .cardHeader, .theme-SOL .footer { background: rgba(255,170,0,.12); }
+    .theme-SEA .cardHeader, .theme-SEA .footer { background: rgba(0,160,255,.12); }
+    .theme-FOR .cardHeader, .theme-FOR .footer { background: rgba(0,190,120,.12); }
+    .theme-SKY .cardHeader, .theme-SKY .footer { background: rgba(120,200,255,.14); }
+
+    .theme-LUN .art { background: linear-gradient(135deg, rgba(90,110,255,.18), rgba(0,0,0,.01)); }
+    .theme-SOL .art { background: linear-gradient(135deg, rgba(255,170,0,.22), rgba(0,0,0,.01)); }
+    .theme-SEA .art { background: linear-gradient(135deg, rgba(0,160,255,.20), rgba(0,0,0,.01)); }
+    .theme-FOR .art { background: linear-gradient(135deg, rgba(0,190,120,.20), rgba(0,0,0,.01)); }
+    .theme-SKY .art { background: linear-gradient(135deg, rgba(120,200,255,.24), rgba(0,0,0,.01)); }
+
+    .note{
+      margin-top: 10px;
+      font-size: 12px;
+      color:#666;
+      line-height: 1.6;
+    }
+  </style>
 </head>
 <body>
-  <h1>カードメーカー（管理者用）</h1>
-  <p>ここにカード生成機能を実装していく</p>
+
+<h1>カードメーカー（管理者用）</h1>
+
+<div class="wrap">
+  <div class="panel">
+    <label for="displayName">表示名（カードに載せる名前）</label>
+    <input id="displayName" type="text" placeholder="例：うちゃみん / Listener001 / 風の旅人 など" />
+
+    <label for="destinyCode">運命コード</label>
+    <input id="destinyCode" type="text" placeholder="例：SKY-983-7405758452" />
+
+    <div class="hint">
+      入力：表示名＋運命コード → カードプレビュー生成 → PNG保存。<br>
+      ※このページは管理者用なので、リスナーにはURLを共有しない運用推奨。
+    </div>
+
+    <div class="row">
+      <button id="build" disabled>カードを生成</button>
+      <button id="save" class="secondary" disabled>PNGで保存</button>
+      <button id="copyCode" class="secondary" disabled>コードをコピー</button>
+    </div>
+
+    <div id="msg" class="msg"></div>
+
+    <div class="note">
+      現段階のカード内容：<br>
+      ・属性コード / 表示名<br>
+      ・技名 / 必殺技名（運命コードから疑似生成）<br>
+      ・フレーバー文（短文）<br>
+      ・運命コード（下部）
+    </div>
+  </div>
+
+  <div class="panel stage">
+    <div id="card" class="cardArtboard theme-SKY" aria-label="card">
+      <div class="cardHeader">
+        <div class="attrCode" id="vAttr">SKY</div>
+        <div class="name" id="vName">（表示名）</div>
+      </div>
+
+      <div class="art">
+        <div class="artMark" id="vMark">SKY</div>
+        <div class="artSub">ART（将来ここに立ち絵）</div>
+      </div>
+
+      <div class="textBox">
+        <div class="line"><div class="label">技</div><div class="value" id="vSkill">—</div></div>
+        <div class="line"><div class="label">必殺</div><div class="value" id="vUlt">—</div></div>
+        <div class="desc" id="vDesc">—</div>
+      </div>
+
+      <div class="footer">
+        <div>運命コード</div>
+        <div class="code" id="vCode">SKY-000-0000000000</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PNG化ライブラリ -->
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+
+<script>
+  // ===== ユーティリティ（seeded RNG） =====
+  function fnv1a32(str) {
+    let h = 0x811c9dc5;
+    for (let i = 0; i < str.length; i++) {
+      h ^= str.charCodeAt(i);
+      h = Math.imul(h, 0x01000193);
+    }
+    return h >>> 0;
+  }
+  function mulberry32(seed) {
+    return function () {
+      let t = seed += 0x6D2B79F5;
+      t = Math.imul(t ^ (t >>> 15), t | 1);
+      t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+  }
+
+  // ===== 運命コード解析 =====
+  // 形式：AAA-999-0123456789
+  const CODE_RE = /^([A-Z]{3})-(\d{3})-(\d{10})$/;
+
+  function parseCode(codeRaw){
+    const code = codeRaw.trim().toUpperCase();
+    const m = code.match(CODE_RE);
+    if (!m) return null;
+    return { attr: m[1], soul: m[2], rand10: m[3], code };
+  }
+
+  // ===== カードテキスト（いったん“仮ロジック”）=====
+  // ※あとで「技名ロジック」をあなたの企画仕様に差し替えればOK
+  const ATTR_WORD = {
+    LUN: { noun:"月", vibe:"静寂", verb:"照らす" },
+    SOL: { noun:"太陽", vibe:"昂揚", verb:"灼く" },
+    SEA: { noun:"海", vibe:"深淵", verb:"呑む" },
+    FOR: { noun:"森", vibe:"繁茂", verb:"縛る" },
+    SKY: { noun:"空", vibe:"疾風", verb:"裂く" },
+  };
+
+  const SKILL_NOUNS = ["スラスト","ステップ","スラッシュ","リフト","ガード","ブースト","バースト","シフト"];
+  const ULT_WORDS   = ["オーバードライブ","エクリプス","グランドクロス","アストラルレイ","ゼロポイント","テンペスト"];
+  const DESC_TEMPLATES = [
+    "《{vibe}》の気配を纏い、戦場の流れを静かに書き換える。",
+    "{noun}の理を読み、迷いなく最短経路を選ぶ。",
+    "一瞬の判断が勝敗を決める。魂番号{souln}は、その直感の鋭さを示す。",
+    "{verb}ための一手ではなく、守るための一手を知っている。"
+  ];
+
+  function makeCardText(name, parts){
+    const seed = fnv1a32(`${name}|${parts.code}`);
+    const rng = mulberry32(seed);
+    const w = ATTR_WORD[parts.attr] || { noun: parts.attr, vibe:"異相", verb:"穿つ" };
+
+    const skill = `${w.noun}${SKILL_NOUNS[Math.floor(rng()*SKILL_NOUNS.length)]}`;
+    const ult   = `${w.noun}・${ULT_WORDS[Math.floor(rng()*ULT_WORDS.length)]}`;
+
+    // フレーバー：テンプレから2文抽選
+    const pick = (arr)=> arr[Math.floor(rng()*arr.length)];
+    const a = pick(DESC_TEMPLATES);
+    const b = pick(DESC_TEMPLATES);
+    const desc = [a,b].map(t =>
+      t.replaceAll("{noun}", w.noun)
+       .replaceAll("{vibe}", w.vibe)
+       .replaceAll("{verb}", w.verb)
+       .replaceAll("{souln}", parts.soul)
+    ).join("\n");
+
+    return { skill, ult, desc };
+  }
+
+  // ===== DOM =====
+  const elName = document.getElementById("displayName");
+  const elCode = document.getElementById("destinyCode");
+  const btnBuild = document.getElementById("build");
+  const btnSave = document.getElementById("save");
+  const btnCopy = document.getElementById("copyCode");
+  const elMsg = document.getElementById("msg");
+
+  const card = document.getElementById("card");
+  const vAttr = document.getElementById("vAttr");
+  const vName = document.getElementById("vName");
+  const vMark = document.getElementById("vMark");
+  const vSkill = document.getElementById("vSkill");
+  const vUlt = document.getElementById("vUlt");
+  const vDesc = document.getElementById("vDesc");
+  const vCode = document.getElementById("vCode");
+
+  function setMsg(text=""){ elMsg.textContent = text; }
+
+  function validate(){
+    const nameOk = elName.value.trim().length > 0;
+    const codeOk = !!parseCode(elCode.value);
+    btnBuild.disabled = !(nameOk && codeOk);
+    btnCopy.disabled = !codeOk;
+    if (!(nameOk && codeOk)) btnSave.disabled = true;
+  }
+
+  function applyTheme(attr){
+    card.classList.remove("theme-LUN","theme-SOL","theme-SEA","theme-FOR","theme-SKY");
+    card.classList.add(`theme-${attr}`);
+  }
+
+  btnBuild.addEventListener("click", () => {
+    setMsg("");
+    const name = elName.value.trim();
+    const parts = parseCode(elCode.value);
+    if (!name) return setMsg("表示名を入力してね。");
+    if (!parts) return setMsg("運命コードの形式が違うよ（例：SKY-983-7405758452）。");
+
+    const text = makeCardText(name, parts);
+
+    applyTheme(parts.attr);
+    vAttr.textContent = parts.attr;
+    vName.textContent = name;
+    vMark.textContent = parts.attr;
+    vSkill.textContent = text.skill;
+    vUlt.textContent = text.ult;
+    vDesc.textContent = text.desc;
+    vCode.textContent = parts.code;
+
+    btnSave.disabled = false;
+  });
+
+  btnCopy.addEventListener("click", async () => {
+    const parts = parseCode(elCode.value);
+    if (!parts) return setMsg("運命コードの形式が違うよ。");
+    await navigator.clipboard.writeText(parts.code);
+    setMsg("運命コードをコピーしました。");
+    setTimeout(()=>setMsg(""), 1200);
+  });
+
+  btnSave.addEventListener("click", async () => {
+    setMsg("");
+    try{
+      // 高解像度にするため scale=2
+      const canvas = await html2canvas(card, { scale: 2, backgroundColor: "#ffffff" });
+      const url = canvas.toDataURL("image/png");
+
+      const name = (elName.value.trim() || "card").replace(/[\\/:*?"<>|]/g, "_");
+      const parts = parseCode(elCode.value);
+      const filename = `${name}_${parts ? parts.attr : "XXX"}_${Date.now()}.png`;
+
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = filename;
+      a.click();
+
+      setMsg("PNGを保存しました。");
+      setTimeout(()=>setMsg(""), 1400);
+    }catch(e){
+      setMsg("PNG保存でエラーが出たよ。ブラウザの設定（ポップアップ/権限）を確認してね。");
+    }
+  });
+
+  elName.addEventListener("input", validate);
+  elCode.addEventListener("input", validate);
+  validate();
+</script>
+
 </body>
 </html>
