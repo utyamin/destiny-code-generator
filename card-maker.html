@@ -159,51 +159,26 @@
       line-height: 1.55;
       white-space: pre-wrap;
     }
-    .footer{
-      margin-top: 12px;
-      padding: 10px 12px;
-      border-radius: 16px;
-      background:#f4f4f4;
-      display:flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 10px;
-      font-size: 12px;
-      color:#333;
-    }
-    .code{
-      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-      font-weight: 800;
-      letter-spacing: .2px;
-      overflow:hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-      max-width: 320px;
-    }
     .cardArtboard{
      position: relative; /* ← これが重要。右下配置の基準になる */
   }
 
     .codeSig{
-    position: absolute;
-    right: 14px;
-    bottom: 12px;
-    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-    font-size: 10px;
-    font-weight: 700;
-     letter-spacing: .2px;
-     opacity: .35;
-     user-select: none;
-     pointer-events: none;
+      right: 12px;
+      bottom: 10px;
+      font-size: 9px;
+      opacity: .28;
+      letter-spacing: .1px;
   }
 
 
+
     /* 属性カラー（背景のニュアンス） */
-    .theme-LUN .cardHeader, .theme-LUN .footer { background: rgba(90,110,255,.10); }
-    .theme-SOL .cardHeader, .theme-SOL .footer { background: rgba(255,170,0,.12); }
-    .theme-SEA .cardHeader, .theme-SEA .footer { background: rgba(0,160,255,.12); }
-    .theme-FOR .cardHeader, .theme-FOR .footer { background: rgba(0,190,120,.12); }
-    .theme-SKY .cardHeader, .theme-SKY .footer { background: rgba(120,200,255,.14); }
+    .theme-LUN .cardHeader { background: rgba(90,110,255,.10); }
+    .theme-SOL .cardHeader { background: rgba(255,170,0,.12); }
+    .theme-SEA .cardHeader { background: rgba(0,160,255,.12); }
+    .theme-FOR .cardHeader { background: rgba(0,190,120,.12); }
+    .theme-SKY .cardHeader { background: rgba(120,200,255,.14); }
 
     .theme-LUN .art { background: linear-gradient(135deg, rgba(90,110,255,.18), rgba(0,0,0,.01)); }
     .theme-SOL .art { background: linear-gradient(135deg, rgba(255,170,0,.22), rgba(0,0,0,.01)); }
@@ -441,4 +416,5 @@
 
 </body>
 </html>
+
 
